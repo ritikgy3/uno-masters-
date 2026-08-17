@@ -7,6 +7,9 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 app.use(express.static(path.join(__dirname, "public")));
+app.get("/health", (req, res) => {
+  res.status(200).send("UNO Masters OK");
+});
 
 const rooms = new Map();
 const COLORS = ["red","yellow","green","blue"];
