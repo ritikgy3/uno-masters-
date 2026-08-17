@@ -3,160 +3,1484 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>UNO Masters • Online</title>
+
+<title>UNO Masters • Online Multiplayer</title>
+
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 20%,#17663a,#062719 55%,#010605);color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
-button,input{font:inherit}button{border:1px solid #59657c;border-radius:12px;padding:11px 15px;background:#172238;color:#fff;font-weight:800;cursor:pointer}button:active{transform:scale(.98)}button.primary{background:linear-gradient(145deg,#fff09a,#f5d36a,#b78320);color:#201605;border-color:#fff0a1}input{width:100%;padding:12px 14px;background:#060c15;color:#fff;border:1px solid #39465f;border-radius:12px;outline:0}.hidden{display:none!important}.wrap{max-width:1100px;margin:auto;padding:14px}
-header{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#070c14ee;border-bottom:1px solid #8f712d;position:sticky;top:0;z-index:20}.logo{font-size:19px;font-weight:950}.status{font-size:13px;font-weight:800}.online{color:#68f0a0}.offline{color:#ff7582}
-.panel{background:linear-gradient(145deg,#172034f5,#0a101cf5);border:1px solid #34415c;border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 16px 40px #0009}.center{text-align:center}.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
-h1{margin:8px 0;color:#f5d36a}.small{color:#aeb8c9;font-size:13px}
-.players{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.player{padding:9px;border-radius:12px;background:#0a111be8;border:1px solid #59657c}.player.active{border-color:#f5d36a;box-shadow:0 0 18px #f5d36a33}.player-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.player-info{font-size:11px;color:#b6c0d0;margin-top:3px}
-.table{min-height:390px;border-radius:22px;padding:14px;background:radial-gradient(ellipse at center,#17663a,#0d4828 40%,#041c11);border:3px solid #573e14;box-shadow:inset 0 0 70px #0008;position:relative}.tabletop{display:flex;justify-content:space-between;align-items:center;gap:10px}.badge{background:#07130de6;border:1px solid #d4ad4d55;border-radius:12px;padding:8px 11px;font-weight:800}.centerCards{display:flex;justify-content:center;align-items:center;gap:28px;margin:35px 0}.card{width:82px;height:116px;border-radius:13px;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:31px;font-weight:950;box-shadow:0 7px 18px #0008;user-select:none}.card.red{background:#d62f3d}.card.yellow{background:#e0b82f;color:#111}.card.green{background:#28a75a}.card.blue{background:#2879d8}.card.wild{background:#202634}.back{background:repeating-linear-gradient(45deg,#152036,#152036 8px,#24314c 8px,#24314c 16px)}
-.hand{display:flex;gap:7px;overflow-x:auto;padding:8px 2px 12px}.hand .card{flex:0 0 58px;width:58px;height:84px;font-size:20px;border-width:2px;cursor:pointer}.hand .card:hover{transform:translateY(-5px)}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1;min-width:120px}
-.notice{min-height:22px;color:#ffe58a;font-weight:800;margin:8px 0}.room{color:#ffe58a;font-weight:950}
-@media(max-width:650px){.players{grid-template-columns:repeat(2,1fr)}.table{min-height:360px}.card{width:68px;height:96px}.centerCards{gap:15px}.wrap{padding:9px}}
+*{box-sizing:border-box}
+
+:root{
+  --bg:#050b08;
+  --green:#0b3d24;
+  --green2:#17633a;
+  --panel:#101b17;
+  --panel2:#14231d;
+  --line:#34483d;
+  --gold:#f6d365;
+  --gold2:#c99b2e;
+  --text:#f7f8f4;
+  --muted:#9daea4;
+  --red:#e3283d;
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+}
+
+body{
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 50% 42%,#17633a 0,#0c3d25 34%,#061a10 65%,#020604 100%);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* HEADER */
+
+header{
+  padding:13px 18px;
+  background:rgba(5,10,8,.94);
+  border-bottom:1px solid #5b4920;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:20;
+  backdrop-filter:blur(12px);
+}
+
+.logo{
+  font-size:18px;
+  font-weight:950;
+  letter-spacing:.2px;
+}
+
+.logo span{
+  color:var(--gold);
+}
+
+.connection{
+  font-size:12px;
+  font-weight:800;
+}
+
+.online{
+  color:#67e8a5;
+}
+
+.offline{
+  color:#ff6e7d;
+}
+
+/* MAIN */
+
+main{
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  padding:14px;
+}
+
+.panel{
+  background:
+    linear-gradient(145deg,
+      rgba(20,35,29,.97),
+      rgba(9,18,14,.97));
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:
+    0 14px 35px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* LOBBY */
+
+.lobby-logo{
+  text-align:center;
+  padding:18px 10px 10px;
+}
+
+.lobby-logo .uno-symbol{
+  width:120px;
+  height:70px;
+  margin:auto;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 30%,#ff626d,#dc2638 52%,#810d1d);
+  border:4px solid var(--gold);
+  box-shadow:
+    0 0 0 3px #351016,
+    0 12px 30px #0009;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transform:rotate(-8deg);
+}
+
+.lobby-logo .uno-symbol b{
+  font-size:35px;
+  font-weight:1000;
+  letter-spacing:-3px;
+  text-shadow:0 3px 4px #0009;
+}
+
+.lobby-title{
+  margin:16px 0 3px;
+  font-size:30px;
+  font-weight:1000;
+  letter-spacing:-1px;
+  color:#f8f4df;
+}
+
+.subtitle{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.row{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+input,button{
+  font:inherit;
+}
+
+input{
+  flex:1;
+  min-width:140px;
+  padding:12px 13px;
+  border-radius:11px;
+  border:1px solid #3b5145;
+  background:#07100c;
+  color:white;
+  outline:none;
+}
+
+input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 2px #f6d36522;
+}
+
+button{
+  padding:11px 14px;
+  border-radius:11px;
+  border:1px solid #3b5145;
+  background:#18271f;
+  color:white;
+  font-weight:850;
+  cursor:pointer;
+  transition:.15s;
+}
+
+button:hover{
+  filter:brightness(1.12);
+}
+
+button:active{
+  transform:scale(.96);
+}
+
+.primary{
+  background:
+    linear-gradient(145deg,#ffe98b,#e1b43f,#b47e1d);
+  color:#201709;
+  border:1px solid #fff0a4;
+  box-shadow:0 5px 15px #0006;
+}
+
+.small{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+}
+
+.message{
+  min-height:22px;
+  color:var(--gold);
+  font-size:13px;
+  font-weight:800;
+  text-align:center;
+}
+
+/* GAME TOP */
+
+.gamebar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.room-code{
+  color:var(--gold);
+  font-size:18px;
+  font-weight:1000;
+  letter-spacing:2px;
+}
+
+/* PLAYERS */
+
+.players{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
+}
+
+.player{
+  padding:10px;
+  border-radius:13px;
+  background:#ffffff07;
+  border:1px solid #2d4438;
+  min-width:0;
+}
+
+.player.active{
+  border-color:var(--gold);
+  box-shadow:
+    0 0 0 1px #f6d36533,
+    0 0 20px #f6d36518;
+}
+
+.player-name{
+  font-weight:900;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.player-info{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.turn{
+  color:var(--gold);
+  font-weight:900;
+}
+
+/* TABLE */
+
+.table{
+  position:relative;
+  min-height:430px;
+  overflow:hidden;
+  border-radius:22px;
+  border:3px solid #5c4316;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      #19703f 0,
+      #0f4b2c 38%,
+      #082b1a 70%,
+      #04150c 100%
+    );
+
+  box-shadow:
+    inset 0 0 80px #0009,
+    0 18px 45px #0009;
+}
+
+.table:before{
+  content:"";
+  position:absolute;
+  inset:14px;
+  border:1px solid rgba(246,211,101,.15);
+  border-radius:18px;
+  pointer-events:none;
+}
+
+.table-logo{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%) rotate(-8deg);
+  font-size:70px;
+  font-weight:1000;
+  letter-spacing:-6px;
+  color:#fff;
+  opacity:.055;
+  pointer-events:none;
+  user-select:none;
+}
+
+.table-content{
+  position:relative;
+  z-index:2;
+  padding:15px;
+}
+
+.table-info{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.info-badge{
+  background:#06140de8;
+  border:1px solid #b9973e55;
+  padding:8px 11px;
+  border-radius:10px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.center{
+  min-height:260px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:25px;
+}
+
+/* CARDS */
+
+.pile,
+.card{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:1000;
+  user-select:none;
+}
+
+.pile{
+  width:82px;
+  height:116px;
+  border-radius:14px;
+  border:3px solid #fff;
+  box-shadow:0 10px 23px #0009;
+}
+
+.draw-pile{
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #112b88 0,
+      #112b88 7px,
+      #f1f3fa 8px,
+      #112b88 10px,
+      #112b88 16px
+    );
+  position:relative;
+}
+
+.draw-pile:after{
+  content:"UNO";
+  position:absolute;
+  font-size:18px;
+  color:white;
+  background:#d51d32;
+  padding:7px 9px;
+  border-radius:50%;
+  transform:rotate(-12deg);
+  border:2px solid white;
+  box-shadow:0 2px 5px #0009;
+}
+
+.top-card{
+  font-size:24px;
+  text-shadow:0 2px 3px #0009;
+}
+
+/* CARD COLORS */
+
+.red{
+  background:linear-gradient(145deg,#ff5968,#a50d28);
+}
+
+.yellow{
+  background:linear-gradient(145deg,#ffe66b,#c99705);
+  color:#201600;
+  text-shadow:none;
+}
+
+.green{
+  background:linear-gradient(145deg,#39d989,#087044);
+}
+
+.blue{
+  background:linear-gradient(145deg,#5d8fff,#173ca5);
+}
+
+.wild{
+  background:
+    conic-gradient(
+      from 45deg,
+      #e64646,
+      #f0c53d,
+      #2ab56d,
+      #3d79ed,
+      #e64646
+    );
+}
+
+.card{
+  width:62px;
+  height:90px;
+  border:3px solid white;
+  border-radius:13px;
+  color:white;
+  position:relative;
+  overflow:hidden;
+  font-size:20px;
+  text-shadow:0 2px 3px #0009;
+  box-shadow:0 8px 18px #0008;
+  transition:
+    transform .14s,
+    box-shadow .14s;
+  flex:0 0 auto;
+}
+
+.card:before{
+  content:"";
+  position:absolute;
+  width:58px;
+  height:58px;
+  background:#ffffff25;
+  border-radius:50%;
+  transform:rotate(-28deg) scaleX(1.45);
+}
+
+.card:after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid #ffffff55;
+  border-radius:10px;
+}
+
+.card span{
+  position:relative;
+  z-index:2;
+}
+
+.card:hover{
+  transform:translateY(-8px) rotate(-1deg);
+  box-shadow:0 16px 27px #000b;
+}
+
+/* HAND */
+
+.hand-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.hand{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:12px 5px 8px;
+  justify-content:center;
+  min-height:105px;
+}
+
+.hand .card{
+  cursor:pointer;
+}
+
+.card.disabled{
+  opacity:.38;
+  cursor:not-allowed;
+}
+
+.card.disabled:hover{
+  transform:none;
+}
+
+/* CONTROLS */
+
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-top:8px;
+}
+
+.draw-button{
+  min-width:100px;
+  min-height:60px;
+  background:
+    linear-gradient(145deg,#1b2b22,#07100c);
+  border:1px solid var(--gold2);
+  color:#f5d878;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.draw-button small{
+  font-size:9px;
+  opacity:.7;
+}
+
+.uno-button{
+  width:82px;
+  height:82px;
+  padding:4px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 25%,
+      #ff6b72,
+      #d41e35 55%,
+      #720916);
+  border:3px solid #f4d46b;
+  box-shadow:
+    0 0 0 3px #4d171d,
+    0 8px 20px #000b;
+  color:white;
+  font-size:13px;
+  letter-spacing:1px;
+}
+
+.uno-button:active{
+  transform:scale(.92);
+}
+
+/* WINNER */
+
+.winner{
+  text-align:center;
+  color:var(--gold);
+  font-size:22px;
+  font-weight:1000;
+  min-height:30px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:760px){
+  .players{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .table{
+    min-height:390px;
+  }
+
+  .center{
+    min-height:220px;
+    gap:15px;
+  }
+
+  .pile{
+    width:70px;
+    height:100px;
+  }
+
+  .card{
+    width:55px;
+    height:82px;
+    font-size:17px;
+  }
+
+  .hand{
+    justify-content:flex-start;
+  }
+
+  .lobby-title{
+    font-size:25px;
+  }
+}
+
+@media(max-width:390px){
+  main{
+    padding:8px;
+  }
+
+  header{
+    padding:12px;
+  }
+
+  .logo{
+    font-size:15px;
+  }
+
+  .card{
+    width:49px;
+    height:74px;
+    font-size:15px;
+  }
+
+  .table{
+    min-height:360px;
+  }
+
+  .center{
+    min-height:195px;
+  }
+}
 </style>
 </head>
+
 <body>
-<header><div class="logo">🏆 UNO Masters</div><div id="conn" class="status offline">● Connecting...</div></header>
-<main class="wrap">
+
+<header>
+  <div class="logo">🏆 UNO <span>Masters</span> • Online</div>
+  <div id="connection" class="connection offline">● Connecting...</div>
+</header>
+
+<main>
+
+<!-- ================= LOBBY ================= -->
 
 <section id="lobby" class="panel">
-  <div class="center">
-    <div style="font-size:52px">🃏</div>
-    <h1>UNO MASTERS</h1>
-    <p class="small">Online multiplayer card game</p>
-  </div>
-  <div class="panel">
-    <label>Your name</label>
-    <input id="name" maxlength="18" placeholder="Enter your name">
-    <div style="height:10px"></div>
-    <div class="row">
-      <button class="primary" onclick="createRoom()">Create Room</button>
-      <input id="roomInput" maxlength="6" placeholder="Room code">
-      <button onclick="joinRoom()">Join Room</button>
+
+  <div class="lobby-logo">
+    <div class="uno-symbol">
+      <b>UNO</b>
     </div>
-    <p id="error" class="notice"></p>
+
+    <div class="lobby-title">UNO MASTERS</div>
+
+    <div class="subtitle">
+      Online Multiplayer Card Arena
+    </div>
   </div>
+
+  <div class="panel">
+
+    <div class="row">
+      <input
+        id="name"
+        maxlength="18"
+        placeholder="Enter your name"
+        autocomplete="off"
+      >
+
+      <button
+        class="primary"
+        onclick="createRoom()"
+      >
+        Create Room
+      </button>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <input
+        id="code"
+        maxlength="6"
+        placeholder="6-digit room code"
+        autocomplete="off"
+      >
+
+      <button onclick="joinRoom()">
+        Join Room
+      </button>
+    </div>
+
+    <p class="small">
+      Create a room and share the code with your friends.
+      Games support 2–6 players or exactly 8 players.
+    </p>
+
+    <div id="lobbyMessage" class="message"></div>
+
+  </div>
+
 </section>
+
+
+<!-- ================= GAME ================= -->
 
 <section id="game" class="hidden">
-  <div class="panel">
-    <div class="row" style="align-items:center">
-      <div>Room: <span id="roomCode" class="room">------</span></div>
-      <button onclick="copyRoom()">Copy code</button>
-      <button id="startBtn" class="primary hidden" onclick="startGame()">Start Game</button>
-    </div>
-    <div id="notice" class="notice"></div>
-  </div>
 
-  <div id="players" class="players"></div>
-
-  <div class="table">
-    <div class="tabletop">
-      <div class="badge">Turn: <span id="turnText">Waiting</span></div>
-      <div class="badge">Deck: <span id="deckCount">0</span></div>
-      <div class="badge">Color: <span id="colorText">—</span></div>
-    </div>
-    <div class="centerCards">
-      <div class="card back">🂠</div>
-      <div id="topCard" class="card">?</div>
-    </div>
-    <div class="center" id="winner"></div>
-    <div class="actions">
-      <button onclick="drawCard()">Draw</button>
-      <button onclick="callUno()">UNO!</button>
-    </div>
-    <p class="small center">Tap a card in your hand to play it.</p>
-  </div>
+  <!-- ROOM BAR -->
 
   <div class="panel">
-    <h3>Your hand <span id="handCount"></span></h3>
-    <div id="hand" class="hand"></div>
+
+    <div class="gamebar">
+
+      <div>
+        <span class="small">ROOM</span><br>
+        <span id="roomCode" class="room-code">------</span>
+      </div>
+
+      <div class="row">
+
+        <button onclick="copyRoom()">
+          Copy Code
+        </button>
+
+        <button
+          id="startButton"
+          class="primary"
+          onclick="startGame()"
+        >
+          Start Game
+        </button>
+
+      </div>
+
+    </div>
+
+    <div id="notice" class="message"></div>
+
   </div>
+
+
+  <!-- PLAYERS -->
+
+  <div class="panel">
+
+    <div class="players" id="players"></div>
+
+  </div>
+
+
+  <!-- TABLE -->
+
+  <div class="panel">
+
+    <div class="table">
+
+      <div class="table-logo">
+        UNO
+      </div>
+
+      <div class="table-content">
+
+        <div class="table-info">
+
+          <div class="info-badge">
+            TURN:
+            <span id="turn">Waiting</span>
+          </div>
+
+          <div class="info-badge">
+            DECK:
+            <span id="deckCount">0</span>
+          </div>
+
+          <div class="info-badge">
+            COLOR:
+            <span id="currentColor">—</span>
+          </div>
+
+        </div>
+
+
+        <div class="center">
+
+          <div
+            id="drawPile"
+            class="pile draw-pile"
+          ></div>
+
+          <div
+            id="topCard"
+            class="pile top-card"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div id="winner" class="winner"></div>
+
+
+        <div class="controls">
+
+          <button
+            class="draw-button"
+            onclick="drawCard()"
+          >
+            <span>DRAW</span>
+            <small>CARD</small>
+          </button>
+
+          <button
+            class="uno-button"
+            onclick="callUno()"
+          >
+            UNO!
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- HAND -->
+
+  <div class="panel">
+
+    <div class="hand-title">
+      <b>YOUR HAND</b>
+      <span id="handCount" class="small">0 cards</span>
+    </div>
+
+    <div
+      id="hand"
+      class="hand"
+    ></div>
+
+  </div>
+
 </section>
+
 </main>
 
-<script>
-let ws=null, myId=null, roomCode=null, state=null, hand=[];
 
-function $(id){return document.getElementById(id)}
-function showError(s){$("error").textContent=s||"";$("notice").textContent=s||""}
-function setConn(ok){$("conn").textContent=ok?"● Online":"● Offline";$("conn").className="status "+(ok?"online":"offline")}
+<script>
+
+/* =========================================================
+   UNO MASTERS — MULTIPLAYER CLIENT
+   Compatible with current server.js
+========================================================= */
+
+let ws = null;
+let myId = null;
+let roomCode = null;
+let state = null;
+let myHand = [];
+
+
+/* ================= DOM ================= */
+
+const $ = id => document.getElementById(id);
+
+
+/* ================= CONNECTION ================= */
 
 function connect(){
-  const proto=location.protocol==="https:"?"wss":"ws";
-  ws=new WebSocket(proto+"://"+location.host);
-  ws.onopen=()=>setConn(true);
-  ws.onclose=()=>{setConn(false);setTimeout(connect,2000)}
-  ws.onerror=()=>setConn(false);
-  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch{return} ; handle(m)}
+
+  const protocol =
+    location.protocol === "https:"
+      ? "wss"
+      : "ws";
+
+  const url =
+    protocol + "://" + location.host;
+
+  ws = new WebSocket(url);
+
+  ws.onopen = () => {
+
+    $("connection").textContent =
+      "● Online";
+
+    $("connection").className =
+      "connection online";
+
+  };
+
+  ws.onclose = () => {
+
+    $("connection").textContent =
+      "● Disconnected";
+
+    $("connection").className =
+      "connection offline";
+
+    setTimeout(connect,3000);
+
+  };
+
+  ws.onerror = () => {
+
+    $("connection").textContent =
+      "● Connection Error";
+
+    $("connection").className =
+      "connection offline";
+
+  };
+
+  ws.onmessage = event => {
+
+    let message;
+
+    try{
+      message = JSON.parse(event.data);
+    }
+    catch{
+      return;
+    }
+
+    handleMessage(message);
+
+  };
+
 }
-function send(m){if(ws&&ws.readyState===1)ws.send(JSON.stringify(m))}
-function name(){return ($("name").value||"Player").trim().slice(0,18)}
 
-function createRoom(){if(!ws||ws.readyState!==1)return showError("Connecting to server...");send({type:"create",name:name()})}
-function joinRoom(){if(!ws||ws.readyState!==1)return showError("Connecting to server...");send({type:"join",name:name(),code:$("roomInput").value.trim()})}
-function startGame(){send({type:"start"})}
-function drawCard(){send({type:"draw"})}
-function callUno(){send({type:"uno"})}
-function copyRoom(){if(roomCode)navigator.clipboard?.writeText(roomCode)}
 
-function handle(m){
-  if(m.type==="joined"){
-    myId=m.id;roomCode=m.code;$("roomCode").textContent=roomCode;
-    $("lobby").classList.add("hidden");$("game").classList.remove("hidden");
-    showError("");$("notice").textContent="Room created. Share the code with other players.";
-  } else if(m.type==="state"){
-    state=m;renderState();
-  } else if(m.type==="hand"){
-    hand=m.hand||[];renderHand();
-  } else if(m.type==="error"){
-    showError(m.message);
-  } else if(m.type==="notice"){
-    $("notice").textContent=m.message;
+/* ================= SEND ================= */
+
+function send(message){
+
+  if(
+    ws &&
+    ws.readyState === WebSocket.OPEN
+  ){
+
+    ws.send(JSON.stringify(message));
+
   }
+
 }
+
+
+/* ================= NAME ================= */
+
+function playerName(){
+
+  const value =
+    $("name").value.trim();
+
+  return value || "Player";
+
+}
+
+
+/* ================= CREATE ================= */
+
+function createRoom(){
+
+  if(
+    !ws ||
+    ws.readyState !== WebSocket.OPEN
+  ){
+
+    $("lobbyMessage").textContent =
+      "Connecting to server...";
+
+    return;
+
+  }
+
+  send({
+    type:"create",
+    name:playerName()
+  });
+
+}
+
+
+/* ================= JOIN ================= */
+
+function joinRoom(){
+
+  const code =
+    $("code").value
+      .trim()
+      .toUpperCase();
+
+  if(code.length !== 6){
+
+    $("lobbyMessage").textContent =
+      "Enter the 6-digit room code.";
+
+    return;
+
+  }
+
+  send({
+    type:"join",
+    name:playerName(),
+    code:code
+  });
+
+}
+
+
+/* ================= START ================= */
+
+function startGame(){
+
+  send({
+    type:"start"
+  });
+
+}
+
+
+/* ================= DRAW ================= */
+
+function drawCard(){
+
+  send({
+    type:"draw"
+  });
+
+}
+
+
+/* ================= UNO ================= */
+
+function callUno(){
+
+  send({
+    type:"uno"
+  });
+
+}
+
+
+/* ================= MESSAGE HANDLER ================= */
+
+function handleMessage(message){
+
+  if(message.type === "joined"){
+
+    myId = message.id;
+    roomCode = message.code;
+
+    $("roomCode").textContent =
+      roomCode;
+
+    $("lobby").classList.add("hidden");
+    $("game").classList.remove("hidden");
+
+    $("lobbyMessage").textContent = "";
+
+    $("notice").textContent =
+      "Room joined successfully.";
+
+    return;
+
+  }
+
+
+  if(message.type === "state"){
+
+    state = message;
+
+    renderState();
+
+    return;
+
+  }
+
+
+  if(message.type === "hand"){
+
+    myHand =
+      Array.isArray(message.hand)
+        ? message.hand
+        : [];
+
+    renderHand();
+
+    return;
+
+  }
+
+
+  if(message.type === "error"){
+
+    $("notice").textContent =
+      "⚠️ " + message.message;
+
+    return;
+
+  }
+
+
+  if(message.type === "notice"){
+
+    $("notice").textContent =
+      message.message;
+
+  }
+
+}
+
+
+/* ================= STATE RENDER ================= */
+
 function renderState(){
-  $("roomCode").textContent=state.room;
-  $("deckCount").textContent=state.deckCount;
-  const colors={red:"🔴 Red",yellow:"🟡 Yellow",green:"🟢 Green",blue:"🔵 Blue",wild:"🌈 Wild"};
-  $("colorText").textContent=colors[state.color]||"—";
-  const me=state.players.findIndex(p=>p.id===myId);
-  const turn=state.players[state.current];
-  $("turnText").textContent=turn?turn.name:"Waiting";
-  $("startBtn").classList.toggle("hidden",!(me===0&&!state.started));
-  $("players").innerHTML=state.players.map((p,i)=>`
-    <div class="player ${i===state.current&&state.started?"active":""}">
-      <div class="player-name">${esc(p.name)} ${p.id===myId?"(You)":""}</div>
-      <div class="player-info">${p.count} cards ${p.connected?"🟢":"⚪"}</div>
-    </div>`).join("");
+
+  if(!state)
+    return;
+
+
+  $("roomCode").textContent =
+    state.room || roomCode || "------";
+
+
+  $("deckCount").textContent =
+    state.deckCount ?? 0;
+
+
+  /* COLOR */
+
+  const colorNames = {
+
+    red:"🔴 RED",
+    yellow:"🟡 YELLOW",
+    green:"🟢 GREEN",
+    blue:"🔵 BLUE"
+
+  };
+
+  $("currentColor").textContent =
+    colorNames[state.color] || "—";
+
+
+  /* PLAYERS */
+
+  const players =
+    state.players || [];
+
+  $("players").innerHTML = "";
+
+  players.forEach((player,index)=>{
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "player" +
+      (
+        index === state.current &&
+        state.started
+          ? " active"
+          : ""
+      );
+
+    const turnText =
+      index === state.current &&
+      state.started
+        ? `<span class="turn"> • YOUR TURN</span>`
+        : "";
+
+    div.innerHTML = `
+
+      <div class="player-name">
+        ${escapeHTML(player.name)}
+        ${player.id === myId ? " (You)" : ""}
+      </div>
+
+      <div class="player-info">
+        ${player.count} cards
+        ${player.connected ? " 🟢" : " ⚪"}
+        ${turnText}
+      </div>
+
+    `;
+
+    $("players").appendChild(div);
+
+  });
+
+
+  /* TURN */
+
+  const currentPlayer =
+    players[state.current];
+
+  $("turn").textContent =
+    currentPlayer
+      ? currentPlayer.name
+      : "Waiting";
+
+
+  /* START BUTTON */
+
+  const myIndex =
+    players.findIndex(
+      player => player.id === myId
+    );
+
+  const canStart =
+    !state.started &&
+    myIndex === 0 &&
+    players.length >= 2 &&
+    players.length !== 7;
+
+  $("startButton").classList.toggle(
+    "hidden",
+    !canStart
+  );
+
+
+  /* TOP CARD */
+
   if(state.top){
-    const c=state.top;
-    $("topCard").className="card "+c.c;
-    $("topCard").textContent=label(c.v);
+
+    const top =
+      state.top;
+
+    const topCard =
+      $("topCard");
+
+    topCard.className =
+      "pile top-card " +
+      (top.c || "");
+
+    const text =
+      cardText(top.v);
+
+    topCard.innerHTML =
+      `<span>${text}</span>`;
+
   }
-  $("winner").textContent=state.winner?"🏆 Winner: "+state.winner:"";
-  renderHand();
+  else{
+
+    $("topCard").className =
+      "pile top-card";
+
+    $("topCard").innerHTML =
+      "—";
+
+  }
+
+
+  /* WINNER */
+
+  $("winner").textContent =
+    state.winner
+      ? "🏆 " + state.winner + " WINS!"
+      : "";
+
 }
+
+
+/* ================= HAND ================= */
+
 function renderHand(){
-  $("handCount").textContent="("+hand.length+")";
-  $("hand").innerHTML=hand.map((c,i)=>`<div class="card ${c.c}" onclick="play(${i})">${label(c.v)}</div>`).join("");
+
+  $("hand").innerHTML = "";
+
+  $("handCount").textContent =
+    myHand.length +
+    (myHand.length === 1 ? " card" : " cards");
+
+
+  if(!state || !state.started)
+    return;
+
+
+  const players =
+    state.players || [];
+
+  const currentPlayer =
+    players[state.current];
+
+
+  const myTurn =
+    currentPlayer &&
+    currentPlayer.id === myId;
+
+
+  myHand.forEach((card,index)=>{
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "card " +
+      (card.c || "");
+
+
+    /*
+      Only disable cards when it isn't
+      your turn.
+
+      The server performs the actual
+      legality check.
+    */
+
+    if(!myTurn){
+
+      button.classList.add("disabled");
+
+    }
+
+
+    button.innerHTML =
+      `<span>${cardText(card.v)}</span>`;
+
+
+    button.onclick = () => {
+
+      if(!myTurn)
+        return;
+
+      playCard(index,card);
+
+    };
+
+
+    $("hand").appendChild(button);
+
+  });
+
 }
-function play(i){
-  const c=hand[i];if(!c)return;
-  let color=null;
-  if(c.c==="wild"){
-    color=prompt("Choose color: red, yellow, green, or blue","red");
-    if(!["red","yellow","green","blue"].includes((color||"").toLowerCase()))return;
-    color=color.toLowerCase();
+
+
+/* ================= PLAY CARD ================= */
+
+function playCard(index,card){
+
+  if(!card)
+    return;
+
+
+  /* WILD COLOR */
+
+  if(card.c === "wild"){
+
+    let selected =
+      prompt(
+        "Choose color:\nred, yellow, green or blue",
+        "red"
+      );
+
+
+    if(!selected)
+      return;
+
+
+    selected =
+      selected.trim().toLowerCase();
+
+
+    const allowed =
+      ["red","yellow","green","blue"];
+
+
+    if(!allowed.includes(selected)){
+
+      alert(
+        "Please choose: red, yellow, green or blue."
+      );
+
+      return;
+
+    }
+
+
+    send({
+
+      type:"play",
+      index:index,
+      color:selected
+
+    });
+
+    return;
+
   }
-  send({type:"play",index:i,color});
+
+
+  /* NORMAL CARD */
+
+  send({
+
+    type:"play",
+    index:index
+
+  });
+
 }
-function label(v){return ({SKIP:"⛔",REV:"↔",DRAW2:"+2",DRAW4:"+4",WILD:"★"})[v]??v}
-function esc(s){return String(s).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]))}
+
+
+/* ================= CARD TEXT ================= */
+
+function cardText(value){
+
+  const labels = {
+
+    REV:"↔",
+
+    SKIP:"SKIP",
+
+    DRAW2:"+2",
+
+    DRAW4:"+4",
+
+    WILD:"WILD"
+
+  };
+
+  return labels[value] ??
+         escapeHTML(value);
+
+}
+
+
+/* ================= COPY ROOM ================= */
+
+function copyRoom(){
+
+  if(!roomCode)
+    return;
+
+
+  if(navigator.clipboard){
+
+    navigator.clipboard
+      .writeText(roomCode)
+      .then(()=>{
+
+        $("notice").textContent =
+          "Room code copied: " + roomCode;
+
+      });
+
+  }
+  else{
+
+    $("notice").textContent =
+      "Room code: " + roomCode;
+
+  }
+
+}
+
+
+/* ================= SECURITY ================= */
+
+function escapeHTML(value){
+
+  return String(value)
+    .replace(
+      /[&<>"']/g,
+      character => ({
+
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+
+      })[character]
+    );
+
+}
+
+
+/* ================= START ================= */
+
 connect();
+
 </script>
+
 </body>
 </html>
