@@ -3,400 +3,160 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-
 <title>UNO Masters • Online</title>
-
 <style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 20%,#17663a,#062719 55%,#010605);color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+button,input{font:inherit}button{border:1px solid #59657c;border-radius:12px;padding:11px 15px;background:#172238;color:#fff;font-weight:800;cursor:pointer}button:active{transform:scale(.98)}button.primary{background:linear-gradient(145deg,#fff09a,#f5d36a,#b78320);color:#201605;border-color:#fff0a1}input{width:100%;padding:12px 14px;background:#060c15;color:#fff;border:1px solid #39465f;border-radius:12px;outline:0}.hidden{display:none!important}.wrap{max-width:1100px;margin:auto;padding:14px}
+header{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:#070c14ee;border-bottom:1px solid #8f712d;position:sticky;top:0;z-index:20}.logo{font-size:19px;font-weight:950}.status{font-size:13px;font-weight:800}.online{color:#68f0a0}.offline{color:#ff7582}
+.panel{background:linear-gradient(145deg,#172034f5,#0a101cf5);border:1px solid #34415c;border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 16px 40px #0009}.center{text-align:center}.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+h1{margin:8px 0;color:#f5d36a}.small{color:#aeb8c9;font-size:13px}
+.players{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}.player{padding:9px;border-radius:12px;background:#0a111be8;border:1px solid #59657c}.player.active{border-color:#f5d36a;box-shadow:0 0 18px #f5d36a33}.player-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.player-info{font-size:11px;color:#b6c0d0;margin-top:3px}
+.table{min-height:390px;border-radius:22px;padding:14px;background:radial-gradient(ellipse at center,#17663a,#0d4828 40%,#041c11);border:3px solid #573e14;box-shadow:inset 0 0 70px #0008;position:relative}.tabletop{display:flex;justify-content:space-between;align-items:center;gap:10px}.badge{background:#07130de6;border:1px solid #d4ad4d55;border-radius:12px;padding:8px 11px;font-weight:800}.centerCards{display:flex;justify-content:center;align-items:center;gap:28px;margin:35px 0}.card{width:82px;height:116px;border-radius:13px;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:31px;font-weight:950;box-shadow:0 7px 18px #0008;user-select:none}.card.red{background:#d62f3d}.card.yellow{background:#e0b82f;color:#111}.card.green{background:#28a75a}.card.blue{background:#2879d8}.card.wild{background:#202634}.back{background:repeating-linear-gradient(45deg,#152036,#152036 8px,#24314c 8px,#24314c 16px)}
+.hand{display:flex;gap:7px;overflow-x:auto;padding:8px 2px 12px}.hand .card{flex:0 0 58px;width:58px;height:84px;font-size:20px;border-width:2px;cursor:pointer}.hand .card:hover{transform:translateY(-5px)}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1;min-width:120px}
+.notice{min-height:22px;color:#ffe58a;font-weight:800;margin:8px 0}.room{color:#ffe58a;font-weight:950}
+@media(max-width:650px){.players{grid-template-columns:repeat(2,1fr)}.table{min-height:360px}.card{width:68px;height:96px}.centerCards{gap:15px}.wrap{padding:9px}}
+</style>
+</head>
+<body>
+<header><div class="logo">🏆 UNO Masters</div><div id="conn" class="status offline">● Connecting...</div></header>
+<main class="wrap">
+
+<section id="lobby" class="panel">
+  <div class="center">
+    <div style="font-size:52px">🃏</div>
+    <h1>UNO MASTERS</h1>
+    <p class="small">Online multiplayer card game</p>
+  </div>
+  <div class="panel">
+    <label>Your name</label>
+    <input id="name" maxlength="18" placeholder="Enter your name">
+    <div style="height:10px"></div>
+    <div class="row">
+      <button class="primary" onclick="createRoom()">Create Room</button>
+      <input id="roomInput" maxlength="6" placeholder="Room code">
+      <button onclick="joinRoom()">Join Room</button>
+    </div>
+    <p id="error" class="notice"></p>
+  </div>
+</section>
+
+<section id="game" class="hidden">
+  <div class="panel">
+    <div class="row" style="align-items:center">
+      <div>Room: <span id="roomCode" class="room">------</span></div>
+      <button onclick="copyRoom()">Copy code</button>
+      <button id="startBtn" class="primary hidden" onclick="startGame()">Start Game</button>
+    </div>
+    <div id="notice" class="notice"></div>
+  </div>
+
+  <div id="players" class="players"></div>
+
+  <div class="table">
+    <div class="tabletop">
+      <div class="badge">Turn: <span id="turnText">Waiting</span></div>
+      <div class="badge">Deck: <span id="deckCount">0</span></div>
+      <div class="badge">Color: <span id="colorText">—</span></div>
+    </div>
+    <div class="centerCards">
+      <div class="card back">🂠</div>
+      <div id="topCard" class="card">?</div>
+    </div>
+    <div class="center" id="winner"></div>
+    <div class="actions">
+      <button onclick="drawCard()">Draw</button>
+      <button onclick="callUno()">UNO!</button>
+    </div>
+    <p class="small center">Tap a card in your hand to play it.</p>
+  </div>
+
+  <div class="panel">
+    <h3>Your hand <span id="handCount"></span></h3>
+    <div id="hand" class="hand"></div>
+  </div>
+</section>
+</main>
+
+<script>
+let ws=null, myId=null, roomCode=null, state=null, hand=[];
+
+function $(id){return document.getElementById(id)}
+function showError(s){$("error").textContent=s||"";$("notice").textContent=s||""}
+function setConn(ok){$("conn").textContent=ok?"● Online":"● Offline";$("conn").className="status "+(ok?"online":"offline")}
+
+function connect(){
+  const proto=location.protocol==="https:"?"wss":"ws";
+  ws=new WebSocket(proto+"://"+location.host);
+  ws.onopen=()=>setConn(true);
+  ws.onclose=()=>{setConn(false);setTimeout(connect,2000)}
+  ws.onerror=()=>setConn(false);
+  ws.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch{return} ; handle(m)}
 }
+function send(m){if(ws&&ws.readyState===1)ws.send(JSON.stringify(m))}
+function name(){return ($("name").value||"Player").trim().slice(0,18)}
 
-:root{
-  --green1:#0b3b22;
-  --green2:#062719;
-  --green3:#03150d;
-  --gold:#f5d36a;
-  --gold2:#c99b28;
-  --cream:#fff5c9;
-  --panel:#101827;
-  --text:#ffffff;
-  --muted:#aeb8c9;
+function createRoom(){if(!ws||ws.readyState!==1)return showError("Connecting to server...");send({type:"create",name:name()})}
+function joinRoom(){if(!ws||ws.readyState!==1)return showError("Connecting to server...");send({type:"join",name:name(),code:$("roomInput").value.trim()})}
+function startGame(){send({type:"start"})}
+function drawCard(){send({type:"draw"})}
+function callUno(){send({type:"uno"})}
+function copyRoom(){if(roomCode)navigator.clipboard?.writeText(roomCode)}
+
+function handle(m){
+  if(m.type==="joined"){
+    myId=m.id;roomCode=m.code;$("roomCode").textContent=roomCode;
+    $("lobby").classList.add("hidden");$("game").classList.remove("hidden");
+    showError("");$("notice").textContent="Room created. Share the code with other players.";
+  } else if(m.type==="state"){
+    state=m;renderState();
+  } else if(m.type==="hand"){
+    hand=m.hand||[];renderHand();
+  } else if(m.type==="error"){
+    showError(m.message);
+  } else if(m.type==="notice"){
+    $("notice").textContent=m.message;
+  }
 }
-
-html,body{
-  margin:0;
-  min-height:100%;
-  background:#020706;
-  color:var(--text);
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,
-  "Segoe UI",sans-serif;
+function renderState(){
+  $("roomCode").textContent=state.room;
+  $("deckCount").textContent=state.deckCount;
+  const colors={red:"🔴 Red",yellow:"🟡 Yellow",green:"🟢 Green",blue:"🔵 Blue",wild:"🌈 Wild"};
+  $("colorText").textContent=colors[state.color]||"—";
+  const me=state.players.findIndex(p=>p.id===myId);
+  const turn=state.players[state.current];
+  $("turnText").textContent=turn?turn.name:"Waiting";
+  $("startBtn").classList.toggle("hidden",!(me===0&&!state.started));
+  $("players").innerHTML=state.players.map((p,i)=>`
+    <div class="player ${i===state.current&&state.started?"active":""}">
+      <div class="player-name">${esc(p.name)} ${p.id===myId?"(You)":""}</div>
+      <div class="player-info">${p.count} cards ${p.connected?"🟢":"⚪"}</div>
+    </div>`).join("");
+  if(state.top){
+    const c=state.top;
+    $("topCard").className="card "+c.c;
+    $("topCard").textContent=label(c.v);
+  }
+  $("winner").textContent=state.winner?"🏆 Winner: "+state.winner:"";
+  renderHand();
 }
-
-body{
-  min-height:100vh;
-  background:
-    radial-gradient(circle at 50% 45%,#155b32 0,#08341f 30%,#03170e 65%,#010605 100%);
+function renderHand(){
+  $("handCount").textContent="("+hand.length+")";
+  $("hand").innerHTML=hand.map((c,i)=>`<div class="card ${c.c}" onclick="play(${i})">${label(c.v)}</div>`).join("");
 }
-
-/* ---------- TOP BAR ---------- */
-
-header{
-  height:62px;
-  padding:0 18px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  background:
-    linear-gradient(180deg,#111827f5,#070c14f5);
-
-  border-bottom:1px solid #8f712d;
-  box-shadow:0 5px 25px #000b;
-
-  position:sticky;
-  top:0;
-  z-index:20;
-  backdrop-filter:blur(14px);
+function play(i){
+  const c=hand[i];if(!c)return;
+  let color=null;
+  if(c.c==="wild"){
+    color=prompt("Choose color: red, yellow, green, or blue","red");
+    if(!["red","yellow","green","blue"].includes((color||"").toLowerCase()))return;
+    color=color.toLowerCase();
+  }
+  send({type:"play",index:i,color});
 }
-
-.logo-title{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:18px;
-  font-weight:950;
-  letter-spacing:.2px;
-}
-
-.connection{
-  font-size:13px;
-  font-weight:800;
-}
-
-.online{
-  color:#68f0a0;
-}
-
-.offline{
-  color:#ff7582;
-}
-
-/* ---------- GENERAL ---------- */
-
-main{
-  width:min(1100px,100%);
-  margin:auto;
-  padding:18px 12px 40px;
-}
-
-.hidden{
-  display:none!important;
-}
-
-.panel{
-  background:
-    linear-gradient(145deg,#172034f5,#0a101cf5);
-
-  border:1px solid #34415c;
-  border-radius:18px;
-  padding:16px;
-  margin-bottom:14px;
-
-  box-shadow:
-    0 16px 40px #0009,
-    inset 0 1px #ffffff0d;
-}
-
-h1,h2,h3,p{
-  margin-top:0;
-}
-
-h2{
-  margin-bottom:15px;
-}
-
-.small{
-  color:var(--muted);
-  font-size:12px;
-}
-
-/* ---------- BUTTONS ---------- */
-
-button,
-input{
-  font:inherit;
-}
-
-button{
-  border:1px solid #4a5875;
-  border-radius:12px;
-  padding:11px 15px;
-
-  background:
-    linear-gradient(145deg,#28334b,#171f31);
-
-  color:#fff;
-  font-weight:850;
-  cursor:pointer;
-
-  box-shadow:
-    0 5px 12px #0006,
-    inset 0 1px #ffffff12;
-
-  transition:.15s ease;
-}
-
-button:active{
-  transform:translateY(2px) scale(.98);
-}
-
-button:disabled{
-  opacity:.4;
-  cursor:not-allowed;
-}
-
-.primary{
-  color:#201605;
-  border:1px solid #fff0a1;
-
-  background:
-    linear-gradient(145deg,#fff09a 0%,#f5d36a 45%,#b78320 100%);
-
-  box-shadow:
-    0 5px 18px #d8a83244,
-    inset 0 1px #fff8;
-}
-
-input{
-  width:100%;
-  padding:12px 14px;
-
-  color:#fff;
-  background:#060c15;
-
-  border:1px solid #39465f;
-  border-radius:12px;
-  outline:none;
-}
-
-input:focus{
-  border-color:var(--gold);
-  box-shadow:0 0 0 2px #f5d36a22;
-}
-
-.row{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  flex-wrap:wrap;
-}
-
-.row input{
-  flex:1;
-  min-width:150px;
-}
-
-/* ---------- LOBBY ---------- */
-
-.lobby-logo{
-  text-align:center;
-  padding:12px 0 20px;
-}
-
-.lobby-logo .trophy{
-  font-size:48px;
-}
-
-.lobby-logo h1{
-  margin:6px 0;
-  font-size:32px;
-  font-weight:1000;
-
-  background:linear-gradient(#fff7c9,#f5d36a,#b98422);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-
-.lobby-logo p{
-  color:#aeb8c9;
-}
-
-/* ---------- CASINO TABLE ---------- */
-
-.casino-frame{
-  position:relative;
-
-  padding:12px;
-
-  border-radius:28px;
-
-  background:
-    linear-gradient(135deg,#d2a746,#714d13 14%,#251807 48%,#9c7528 85%,#d9b451);
-
-  box-shadow:
-    0 25px 60px #000c,
-    inset 0 2px 3px #fff6,
-    inset 0 -3px 5px #000a;
-}
-
-.casino-table{
-  position:relative;
-  overflow:hidden;
-
-  min-height:600px;
-
-  border-radius:20px;
-
-  background:
-    radial-gradient(
-      ellipse at center,
-      #17663a 0%,
-      #0d4828 35%,
-      #07311d 68%,
-      #041c11 100%
-    );
-
-  border:3px solid #573e14;
-
-  box-shadow:
-    inset 0 0 80px #0008,
-    inset 0 0 20px #0009;
-}
-
-/* felt texture */
-
-.casino-table:before{
-  content:"";
-  position:absolute;
-  inset:0;
-
-  background:
-    repeating-radial-gradient(
-      circle at 50% 50%,
-      #ffffff05 0,
-      #ffffff05 1px,
-      transparent 1px,
-      transparent 5px
-    );
-
-  opacity:.3;
-  pointer-events:none;
-}
-
-/* center logo */
-
-.center-logo{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-
-  font-size:70px;
-  font-weight:1000;
-  letter-spacing:-5px;
-
-  color:#fff;
-  opacity:.075;
-
-  pointer-events:none;
-  user-select:none;
-}
-
-/* ---------- ROOM BAR ---------- */
-
-.room-bar{
-  position:relative;
-  z-index:5;
-
-  margin:13px;
-
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-
-  padding:11px 13px;
-
-  border-radius:14px;
-
-  background:#07130de6;
-  border:1px solid #d4ad4d55;
-
-  box-shadow:0 8px 20px #0005;
-}
-
-.room-code{
-  color:#ffe58a;
-  font-weight:950;
-}
-
-/* ---------- PLAYERS ---------- */
-
-.players{
-  position:relative;
-  z-index:4;
-
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
-
-  padding:0 13px;
-}
-
-.player{
-  min-height:66px;
-
-  padding:9px;
-
-  border-radius:13px;
-
-  background:
-    linear-gradient(145deg,#162133e8,#0a111be8);
-
-  border:1px solid #59657c;
-
-  box-shadow:
-    0 7px 16px #0007,
-    inset 0 1px #ffffff0a;
-}
-
-.player.active{
-  border-color:var(--gold);
-
-  box-shadow:
-    0 0 0 1px #f5d36a44,
-    0 0 25px #f5d36a33,
-    0 7px 18px #0008;
-}
-
-.player-name{
-  font-weight:950;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.player-info{
-  margin-top:4px;
-  color:#b6c0d0;
-  font-size:11px;
-}
-
-/* ---------- GAME CENTER ---------- */
-
-.game-center{
-  position:relative;
-  z-index:3;
-
-  min-height:310px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:28px;
-}
-
-.deck-wrap
+function label(v){return ({SKIP:"⛔",REV:"↔",DRAW2:"+2",DRAW4:"+4",WILD:"★"})[v]??v}
+function esc(s){return String(s).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]))}
+connect();
+</script>
+</body>
+</html>
