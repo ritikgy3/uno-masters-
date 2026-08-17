@@ -24,7 +24,7 @@ function makeDeck(){
 }
 function code(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
 function safeName(n){ return String(n||"Player").replace(/[<>]/g,"").trim().slice(0,18)||"Player"; }
-function send(ws,msg){ if(ws.readyState===1) ws.send(JSON.stringify(msg)); }
+function send(ws,msg){ if(ws && ws.readyState===1) ws.send(JSON.stringify(msg)); }
 function broadcast(room,msg){ room.players.forEach(p=>send(p.ws,msg)); }
 function publicState(room){
   return {
